@@ -15,6 +15,13 @@ usage() {
   exit 0
 }
 
+check_aws() {
+  if ! command -v aws >/dev/null; then
+    err "This tool requires AWS CLI tools. Please see https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html"
+    exit 1
+  fi
+}
+
 set_resource_and_region() {
   profile_name='default'
   resource_name=''
@@ -71,22 +78,22 @@ open_url() {
   if [[ $OSTYPE == "linux-gnu"* ]] || [[ "$OSTYPE" == "freebsd"* ]]; then
     if [ -v "$BROWSER" ]; then
       $BROWSER "$1"
-    elif which xdg-open >/dev/null; then
+    elif command -v xdg-open >/dev/null; then
       xdg-open "$1"
-    elif which gnome-open >/dev/null; then
+    elif command -v gnome-open >/dev/null; then
       gnome-open "$1"
-    elif which sensible-browser >/dev/null; then
+    elif command -v sensible-browser >/dev/null; then
       sensible-browser "$1"
-    elif which x-www-browser >/dev/null; then
+    elif command -v x-www-browser >/dev/null; then
       x-www-browser "$1"
     fi
   elif [[ "$OSTYPE" == "darwin"* ]]; then
-    if which open >/dev/null; then
+    if command -v open >/dev/null; then
       open "$1"
     fi
-  elif which python >/dev/null; then
+  elif command -v python >/dev/null; then
     python -mwebbrowser "$1"
-  elif which python3 >/dev/null; then
+  elif command -v python3 >/dev/null; then
     python3 -mwebbrowser "$1"
   else
     err "Couldn't open a browser window."
@@ -183,5 +190,6 @@ attempt_match() {
   fi
 }
 
+check_aws
 set_resource_and_region "$@"
 attempt_match
