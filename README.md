@@ -9,8 +9,8 @@ This can simplify troubleshooting and save clicks to get from resource ID to con
 This script can be installed anywhere on your path or wherever else you'd like to put it for maximum convenience. This script requires the `aws` CLI tools to be installed.
 
 ```
-wget -O /usr/local/bin/ec2go https://raw.githubusercontent.com/jkingsman/ec2go/master/ec2go
-chmod +x /usr/local/bin/ec2go
+sudo wget -O /usr/local/bin/ec2go https://raw.githubusercontent.com/jkingsman/ec2go/master/ec2go
+sudo chmod +x /usr/local/bin/ec2go
 
 ec2go <resource ID>
 ```
