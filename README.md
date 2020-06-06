@@ -1,6 +1,6 @@
 # ec2go
 
-`ec2go` is a bash script to parse the type of AWS resource (e.g. `i-0201ec6207852de37` is an EC2 instance) and automatically open the corresponding AWS Console webpage to search for that resource.
+`ec2go` is a bash script to parse the type of AWS resource (e.g. `i-0201ec6207852de37` is an EC2 instance) and automatically open the corresponding AWS Console page in the browser to search for that resource.
 
 This can simplify troubleshooting and save clicks to get from resource ID to console page.
 
@@ -17,15 +17,15 @@ ec2go <resource ID>
 
 ## Usage:
 
-`ec2go.sh [profile] <resource ID>`
+`ec2go [--profile <profilename>] [--url-only] resourceIdentifier`
 
-This will give a best-effort to open the appropriate console for the given resource in the browser.
+`--profile <profilename>` sets the AWS profile to determine region from (in `~/.aws/`). Defaults to `default`.
 
-If provided, `profile` indicates the AWS user configuration profile to use for region selection. Defaults to `default`.
+`--url-only` will not attempt to open a browser window and will output the Console URL to stdout.
 
-`<resource ID>` must be one of the following formats:
+`resourceIdentifier` must be one of the following *Resource ID Formats*:
 
-| Resource ID Example | Resource Type |
+| Resource ID Format | Implied Resource Type |
 |-|-|
 | `i-0201ec6207852de37` | instance |
 | `vol-0201ec6207852de37` | volume |

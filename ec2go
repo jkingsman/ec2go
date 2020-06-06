@@ -2,40 +2,71 @@
 #
 # Resolve EC2 resource identifiers to AWS console links
 
-set -euf -o pipefail
+set -o errexit -o pipefail -o noclobber -o nounset
 
 err() {
   echo "$*" >&2
 }
 
+usage() {
+  err "Usage: ec2go [--profile <profilename>] [--url-only] resourceIdentifier"
+  err "--profile <profilename>: specifies AWS profile name to draw region from. Default: default"
+  err "--url-only: make no attempt to open a browser; output Console URL to stdout"
+  exit 0
+}
+
 set_resource_and_region() {
-  if [ $# -eq 0 ] || [ $# -gt 2 ]; then
-    err "Usage: ec2go.sh [profile name] resourceIdentifier"
-    err "[profile name] defaults to 'default' and is used to determine the profile to draw the region from"
-    exit 0
+  profile_name='default'
+  resource_name=''
+  url_only=false
+
+  if [ $# -eq 0 ] || [ $# -gt 4 ]; then
+    usage
   fi
 
-  if [ $# -eq 2 ]; then
-    readonly profile_name="$1"
-    readonly resource_name="$2"
-  else
-    readonly profile_name='default'
-    readonly resource_name="$1"
+  while [[ $# -gt 0 ]]
+  do
+  key="$1"
+
+  case $key in
+      -p|--profile)
+      profile_name="$2"
+      shift
+      shift
+      ;;
+      --url-only)
+      url_only=true
+      shift
+      ;;
+      *)
+      resource_name="$1"
+      shift
+      ;;
+    esac
+  done
+
+  if [ ${#resource_name} -eq 0 ]; then
+    usage
   fi
 
-  if ! readonly region=$(aws configure get region --profile $profile_name); then
+  if ! region=$(aws configure get region --profile "$profile_name"); then
     err "Region fetch from profile '$profile_name' has failed."
     exit 1
   fi
 }
 
 open_url() {
+  if [ "$url_only" = true ]; then
+    echo "$1"
+    exit 0
+  fi
+
   echo "Opening $1"
 
   # many thanks to:
   #   https://askubuntu.com/a/8255 (browser opening)
   #   https://askubuntu.com/a/8256 (browser opening)
-  #   https://stackoverflow.com/a/8597411/1588786 (OS detection opening)
+  #   https://stackoverflow.com/a/8597411/1588786 (OS detection)
 
   if [[ $OSTYPE == "linux-gnu"* ]] || [[ "$OSTYPE" == "freebsd"* ]]; then
     if [ -v "$BROWSER" ]; then
