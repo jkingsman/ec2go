@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+#
+# Resolve EC2 resource identifiers to AWS console links
+
+set -euf -o pipefail
+
+err() {
+  echo "$*" >&2
+}
+
+set_resource_and_region() {
+  if [ $# -eq 0 ] || [ $# -gt 2 ]; then
+    err "Usage: ec2go.sh [profile name] resourceIdentifier"
+    err "[profile name] defaults to 'default' and is used to determine the profile to draw the region from"
+    exit 0
+  fi
+
+  if [ $# -eq 2 ]; then
+    readonly profile_name="$1"
+    readonly resource_name="$2"
+  else
+    readonly profile_name='default'
+    readonly resource_name="$1"
+  fi
+
+  if ! readonly region=$(aws configure get region --profile $profile_name); then
+    err "Region fetch from profile '$profile_name' has failed."
+    exit 1
+  fi
+}
+
+open_url() {
+  echo "Opening $1"
+
+  # many thanks to:
+  #   https://askubuntu.com/a/8255 (browser opening)
+  #   https://askubuntu.com/a/8256 (browser opening)
+  #   https://stackoverflow.com/a/8597411/1588786 (OS detection opening)
+
+  if [[ $OSTYPE == "linux-gnu"* ]] || [[ "$OSTYPE" == "freebsd"* ]]; then
+    if [ -v "$BROWSER" ]; then
+      $BROWSER "$1"
+    elif which xdg-open >/dev/null; then
+      xdg-open "$1"
+    elif which gnome-open >/dev/null; then
+      gnome-open "$1"
+    elif which sensible-browser >/dev/null; then
+      sensible-browser "$1"
+    elif which x-www-browser >/dev/null; then
+      x-www-browser "$1"
+    fi
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    if which open >/dev/null; then
+      open "$1"
+    fi
+  elif which python >/dev/null; then
+    python -mwebbrowser "$1"
+  elif which python3 >/dev/null; then
+    python3 -mwebbrowser "$1"
+  else
+    err "Couldn't open a browser window."
+  fi
+}
+
+attempt_match() {
+  # resource types sourced from `aws ec2 describe-id-format --region us-east-1`
+
+  # reservation
+  if [[ $resource_name =~ ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$ ]]; then
+    open_url "https://console.aws.amazon.com/ec2/v2/home?region=$region#ReservedInstances:search=$resource_name"
+
+  # instance
+  elif [[ $resource_name =~ ^i-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/ec2/v2/home?region=$region#Instances:search=$resource_name"
+
+  # volume
+  elif [[ $resource_name =~ ^vol-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/ec2/v2/home?region=$region#Volumes:search=$resource_name"
+
+  # snapshot
+  elif [[ $resource_name =~ ^snap-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/ec2/v2/home?region=$region#Snapshots:search=$resource_name"
+
+  # network-interface-attachment, "network-interface"
+  elif [[ $resource_name =~ ^eni(-attach)?-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/ec2/v2/home?region=$region#NIC:search=$resource_name"
+
+  # elastic-ip-allocation, "elastic-ip-association"
+  elif [[ $resource_name =~ ^eipa[sl]{2}oc-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/ec2/v2/home?region=$region#Addresses:search=$resource_name"
+
+  # vpc
+  elif [[ $resource_name =~ ^vpc-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/vpc/home?region=$region#vpcs:search=$resource_name"
+
+  # subnet
+  elif [[ $resource_name =~ ^subnet-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/vpc/home?region=$region#subnets:search=$resource_name"
+
+  # route-table
+  elif [[ $resource_name =~ ^rtb-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/vpc/home?region=$region#RouteTables:search=$resource_name"
+
+  # network-acl
+  elif [[ $resource_name =~ ^acl-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/vpc/home?region=$region#acls:search=$resource_name"
+
+  # "dhcp-options
+  elif [[ $resource_name =~ ^dopt-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/vpc/home?region=$region#dhcpOptions:search=$resource_name"
+
+  # internet-gateway
+  elif [[ $resource_name =~ ^igw-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/vpc/home?region=$region#igws:search=$resource_name"
+
+  # vpc-peering-connection
+  elif [[ $resource_name =~ ^pcx-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/vpc/home?region=$region#PeeringConnections:search=$resource_name"
+
+  # security-group
+  elif [[ $resource_name =~ ^sg-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/ec2/v2/home?region=$region#SecurityGroups:search=$resource_name"
+
+  # vpc-endpoint
+  elif [[ $resource_name =~ ^vpce-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/vpc/home?region=$region#Endpoints:search=$resource_name"
+
+  # image
+  elif [[ $resource_name =~ ^ami-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/ec2/v2/home?region=$region#Images:search=$resource_name"
+
+  # customer-gateway
+  elif [[ $resource_name =~ ^cgw-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/vpc/home?region=$region#CustomerGateways:search=$resource_name"
+
+  # vpn-connection
+  elif [[ $resource_name =~ ^vpn-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/vpc/home?region=$region#VpnConnections:search=$resource_name"
+
+  # vpn-gateway
+  elif [[ $resource_name =~ ^vgw-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/vpc/home?region=$region#VpnGateways:search=$resource_name"
+
+  # client-vpn-endpoint
+  elif [[ $resource_name =~ ^cvpn-endpoint-[0-9a-fA-F]+$ ]]; then
+    open_url "https://console.aws.amazon.com/vpc/home?region=$region#ClientVPNEndpoints:search=$resource_name"
+
+  # no match
+  else
+    err "No AWS console page available for '$resource_name'. Please open an issue at https://github.com/jkingsman/ec2go/issues with your resource ID format and an explanation of what you expect to see. Thanks!"
+    exit 1
+  fi
+}
+
+set_resource_and_region "$@"
+attempt_match

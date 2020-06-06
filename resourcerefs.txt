@@ -1,0 +1,24 @@
+This is just a list of resources I keep for my own notes as I'm assembling URLs.
+
+# reservation 00a726e2-5125-40ae-a5c0-b9e13f71f629 https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#ReservedInstances:search=00a726e2-5055-40fe-a5c0-b9e13f71f629;sort=reservedInstancesId
+# instance i-0201ec6207852de37 https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=i-0208ec6206832ff96;sort=tag:Name
+# volume vol-0201ec6207852de37 https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Volumes:search=vol-0c123d853830e5f3e;sort=size
+# snapshot snap-0201ec6207852de37 https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Snapshots:visibility=owned-by-me;search=snap-0f6f1ae6b41537253;sort=desc:startTime
+# network-interface-attachment eni-attach-0201ec6207852de37 https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#NIC:search=eni-attach-0372e05f0a2f541c0;sort=networkInterfaceId
+# network-interface eni-0201ec6207852de37 https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#NIC:search=eni-0003151f42dc3c15e;sort=networkInterfaceId
+# elastic-ip-allocation eipalloc-0201ec6207852de37 https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Addresses:search=eipalloc-0fa8167bd4f31cdfc
+# elastic-ip-association eipassoc-0201ec6207852de37 https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Addresses:search=eipassoc-0fa8167bd4f31cdfc
+# vpc vpc-0201ec6207852de37 https://console.aws.amazon.com/vpc/home?region=us-east-1#vpcs:search=vpc-1928077d;sort=VpcId
+# subnet subnet-0201ec6207852de37 https://console.aws.amazon.com/vpc/home?region=us-east-1#subnets:search=subnet-2d5f5317;sort=SubnetId
+# route-table rtb-0201ec6207852de37 https://console.aws.amazon.com/vpc/home?region=us-east-1#RouteTables:search=rtb-077e8f60;sort=routeTableId
+# network-acl acl-0201ec6207852de37 https://console.aws.amazon.com/vpc/home?region=us-east-1#acls:search=acl-95b4b1f1;sort=networkAclId
+# dhcp-options dopt-0201ec6207852de37 https://console.aws.amazon.com/vpc/home?region=us-east-1#dhcpOptions:search=dopt-949462f1
+# internet-gateway igw-0201ec6207852de37 https://console.aws.amazon.com/vpc/home?region=us-east-1#igws:search=igw-2b78d44f;sort=internetGatewayId
+# vpc-peering-connection pcx-0201ec6207852de37 https://console.aws.amazon.com/vpc/home?region=us-east-1#PeeringConnections:search=foobar;sort=vpcPeeringConnectionId
+# security-group sg-0201ec6207852de37 https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#SecurityGroups:search=sg-004b2e878c104e7bf
+# vpc-endpoint vpce-0201ec6207852de37 https://console.aws.amazon.com/vpc/home?region=us-east-1#Endpoints:search=vpce-0dfc1f64;sort=vpcEndpointId
+# image ami-0201ec6207852de37 https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Images:visibility=owned-by-me;search=ami-0edc57e17bfbd4d69;sort=name
+# customer-gateway cgw-0201ec6207852de37 https://console.aws.amazon.com/vpc/home?region=us-east-1#CustomerGateways:search=foobar;sort=CustomerGatewayId
+# vpn-connection vpn-0201ec6207852de37 https://console.aws.amazon.com/vpc/home?region=us-east-1#VpnConnections:VpnConnectionId=vpn-0d485789088f167ea;sort=VpnConnectionId
+# vpn-gateway vgw-0201ec6207852de37 https://console.aws.amazon.com/vpc/home?region=us-east-1#VpnGateways:VpnGatewayId=vgw-0241b48f9c9ea2fcd;sort=VpnGatewayId
+# client-vpn-endpoint cvpn-endpoint-0201ec6207852de37 https://console.aws.amazon.com/vpc/home?region=us-east-1#ClientVPNEndpoints:search=foobar;sort=clientVpnEndpointId
